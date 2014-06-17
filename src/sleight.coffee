@@ -1,19 +1,34 @@
 Observer = (value, subscribers) ->
-
+	self = @
 	val = value
+	subscribers = subscribers
 
-	Observer.prototype.bserver = ->
+	this.getSubscribers = ->
+		return subscribers.elements
+
+	this.notifySubscribers = ->
+		for obj in subscribers.elements
+			sleight.updateElement(obj.element, self, obj.type)
+		return
+
+	this.attachSubscriber = (element, type) ->
+		subscribers.elements.push {element: element, type: type}
+		return
+
+	this.value = ->
 		if arguments.length is 0
 			return val
 		else
 			val = arguments[0]
 			# need to notify the subscribers
+			self.notifySubscribers()
 		return
 
-	return this.bserver
+	return self
 
 class Subscription
-	constructor: (@observer) ->
+	constructor: ->
+		@elements = []
 
 class Sleight
 	constructor: ->
@@ -24,6 +39,7 @@ class Sleight
 		return
 
 	name = 'sleight-'
+
 	bindings = [
 		'text',
 		'click',
@@ -31,10 +47,12 @@ class Sleight
 		'value'
 	]
 
-	# create a new observer object and attacj it to a subscriber
+	# create a new observer object and attach it to a subscriber
 
 	sub: (val) ->
-		observer = new Observer(val)
+		subscriber = new Subscription()
+		@subscriptions.push(subscriber)
+		observer = new Observer(val, subscriber)
 		@observers.push observer
 		return observer
 
@@ -64,12 +82,40 @@ class Sleight
 	parse: (elements) ->
 		for element in elements
 			for attr in element.attributes
-				if bindings.indexOf(attr.name.replace(name, '')) > -1
+				bindingType = attr.name.replace(name, '')
+				if bindings.indexOf(bindingType) > -1
 					# evaluate controllers to find a 
 					for controller in @controllers
-						for key, value of controller
+						for key, prop of controller
 							if key is attr.value
-								element.innerHTML = value()				
+								@handleBinding(element, prop, bindingType)			
 		return
+
+	handleBinding: (element, prop, bindingType) ->
+		prop.attachSubscriber(element, bindingType)
+
+		# set events
+		@updateElement(element, prop, bindingType)
+
+		# set event handlers
+		switch bindingType
+			when 'value'
+				element.addEventListener 'keyup', 
+					do (prop) ->
+						(elem) -> 
+							prop.value(elem.target.value) 
+			when 'click'
+				console.log 'register handler'
+		return
+
+	updateElement: (element, prop, bindingType) ->
+		switch bindingType
+			when 'text' 
+				element.innerHTML = prop.value()
+			when 'value'
+				element.value = prop.value()
+		return
+
+
 
 @sleight = new Sleight()
