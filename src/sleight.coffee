@@ -114,6 +114,14 @@ class Sleight
 				element.innerHTML = prop.value()
 			when 'value'
 				element.value = prop.value()
+			when 'foreach'
+				array = []
+				temp = null
+				for obj in prop.value()
+					temp = element
+					temp.innerHTML = obj
+					array.push temp.outerHTML
+				element.innerHTML = array.join('')
 		return
 
 
