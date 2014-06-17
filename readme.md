@@ -9,10 +9,13 @@ Controller = function() {
     self.testOne = sleight.sub('Hello World');
     self.testTwo = sleight.sub('Hello');
     self.testThree = sleight.sub(['one', 'two']);
+    self.myFunction = function() {
+      console.log('clicked');
+    };
   };
 ```
 
-Adding bindings to your markup (text, value, foreach)
+Adding bindings to your markup (text, value, foreach, click event)
 ```html
 <section class="binding">
 
@@ -23,6 +26,8 @@ Adding bindings to your markup (text, value, foreach)
 	<input type="text" sleight-value="testTwo">
 
 	<h1 sleight-foreach="testThree"></h1><br>
+
+	<button sleight-click="myFunction">Button</button>
 
 </section>
 ```

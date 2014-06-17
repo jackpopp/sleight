@@ -92,7 +92,7 @@ class Sleight
 		return
 
 	handleBinding: (element, prop, bindingType) ->
-		prop.attachSubscriber(element, bindingType)
+		prop.attachSubscriber(element, bindingType) if typeof(prop) is 'object'
 
 		# set events
 		@updateElement(element, prop, bindingType)
@@ -105,7 +105,10 @@ class Sleight
 						(elem) -> 
 							prop.value(elem.target.value) 
 			when 'click'
-				console.log 'register handler'
+				element.addEventListener 'click', 
+					do (prop) ->
+						(elem) -> 
+							prop()
 		return
 
 	updateElement: (element, prop, bindingType) ->
