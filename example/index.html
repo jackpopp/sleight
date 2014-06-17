@@ -1,0 +1,17 @@
+<script src="../src/sleight.js"></script>
+<script src="cntrl.js"></script>
+<section class="binding">
+
+	<h1 sleight-text="testOne"></h1><br>
+	<input type="text" sleight-value="testOne"><br>
+
+	<h1 sleight-text="testTwo"></h1><br>
+	<input type="text" sleight-value="testTwo">
+
+	<h1 sleight-foreach="testThree"></h1><br>
+
+</section>
+<script>
+	window.controller = new Controller()
+	sleight.bind('.binding', controller)
+</script>
